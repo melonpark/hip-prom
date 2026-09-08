@@ -274,7 +274,7 @@ $('#pdate').value=new Date().toISOString().slice(0,10);
 if(P.get('pid'))$('#pid').value=P.get('pid');if(P.get('name'))$('#pname').value=P.get('name');if(P.get('date'))$('#pdate').value=P.get('date');
 if(P.get('side'))seg.side=P.get('side');if(P.get('visit'))seg.visit=P.get('visit');
 if(P.get('u')){use.hhs=P.get('u').includes('h');use.womac=P.get('u').includes('w');use.eq5d=P.get('u').includes('e');$('#useHHS').checked=use.hhs;$('#useWOMAC').checked=use.womac;$('#useEQ').checked=use.eq5d;}
-if(MODE==='patient'){$('#modeTag').textContent='환자 입력';$('#qrCard').classList.add('hidden');$('#pid').readOnly=true;$('#pname').readOnly=true;$('#bStart').textContent='설문 시작 →';}
+if(MODE==='patient'){$('#modeTag').textContent='환자 입력';$('#qrCard').classList.add('hidden');if(P.get('pid')){$('#pid').readOnly=true;$('#pname').readOnly=true;}else{$('#pid').placeholder='진료카드/접수증의 등록번호';}$('#bStart').textContent='설문 시작 →';}
 buildPages();
 if(P.get('a')){const [h,w,e]=P.get('a').split('~');
   if(h)h.split('.').forEach((v,i)=>{if(v!=='')hhs[HK[i]]=+v;});
