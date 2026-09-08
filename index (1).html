@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>고관절 기능 설문 (HHS · WOMAC · EQ-5D)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pretendard/1.3.9/static/pretendard.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#F7F8F6;--paper:#FFF;--ink:#16212B;--ink-2:#4B5763;--line:#D9DED8;--sel:#0F4C5C;--sel-soft:#E3EEF0;--warn:#9B3B2E;--ok:#1B7F5C}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:var(--bg);color:var(--ink);font-size:18px;line-height:1.45;padding-bottom:120px;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+header h1{font-size:20px;font-weight:700}header h1 small{font-weight:400;color:var(--ink-2);font-size:13px;margin-left:8px}
+.mode{font-size:13px;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--paper);white-space:nowrap}
+.steps{display:flex;gap:6px;margin-bottom:16px}
+.steps span{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.steps span.done{background:var(--ok)}.steps span.cur{background:var(--sel)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h2{font-size:15px;font-weight:600;color:var(--ink-2);margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card h2 b{font-weight:600;color:var(--ink);font-size:16px}.card h2 .pts{font-size:13px;font-weight:400;text-align:right}
+.intro{font-size:15px;color:var(--ink-2);margin-bottom:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid .full{grid-column:1/-1}
+label.f{display:block;font-size:13px;color:var(--ink-2);margin-bottom:4px}
+input[type=text],input[type=date],input[type=number]{width:100%;font:inherit;font-size:18px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#FAFBFA;color:var(--ink)}
+input:focus,button:focus-visible{outline:2px solid var(--sel);outline-offset:1px}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{flex:1;font:inherit;font-size:15px;padding:11px 0;border:0;background:#FAFBFA;color:var(--ink-2);cursor:pointer}
+.seg button.on{background:var(--sel);color:#fff}
+.q{border-top:1px solid var(--line);padding:14px 0}.q:first-child{border-top:0;padding-top:4px}
+.q .t{font-size:17px;font-weight:600;margin-bottom:8px;display:flex;gap:8px}.q .t .no{color:var(--ink-2);font-weight:500;min-width:26px}
+.scale{display:flex;gap:6px}
+.scale button{flex:1;font:inherit;font-size:20px;font-weight:600;min-height:54px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink-2);cursor:pointer}
+.scale button.on{background:var(--sel);border-color:var(--sel);color:#fff}
+.anchors{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-top:4px;padding:0 4px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;font:inherit;font-size:17px;text-align:left;width:100%;min-height:50px}
+.opt .pt{font-size:13px;color:var(--ink-2);flex-shrink:0}.opt.on{background:var(--sel-soft);border-color:var(--sel);color:var(--sel)}.opt.on .pt{color:var(--sel);font-weight:600}
+.chk{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:16px;cursor:pointer;user-select:none}.chk input{width:22px;height:22px;accent-color:var(--sel)}
+.rom{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.rom input{text-align:center;padding:10px 4px}
+.sub{display:flex;justify-content:space-between;font-size:15px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:10px;margin-top:6px}.sub b{color:var(--ink);font-variant-numeric:tabular-nums}
+.hint{font-size:13px;color:var(--ink-2);margin-top:8px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--paper);border-top:1px solid var(--line);padding:12px 16px;box-shadow:0 -6px 20px rgba(22,33,43,.06)}
+.bar .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.bar .st{font-size:14px;color:var(--ink-2)}.bar .miss{font-size:13px;color:var(--warn)}
+.btns{margin-left:auto;display:flex;gap:8px}
+.btn{font:inherit;font-size:16px;font-weight:600;padding:12px 18px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;white-space:nowrap}
+.btn.p{background:var(--sel);color:#fff;border-color:var(--sel)}.btn.big{width:100%;padding:16px;font-size:18px}.btn:disabled{opacity:.4;cursor:default}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+.qrwrap{text-align:center;padding:8px 0}.qrwrap>div:first-child{display:inline-block;padding:12px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.qrurl{font-size:12px;color:var(--ink-2);word-break:break-all;margin-top:8px}
+.summary{width:100%;border-collapse:collapse;font-size:16px}.summary td{padding:9px 4px;border-top:1px solid var(--line)}.summary td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.done{text-align:center;padding:16px 8px}.done .big{font-size:26px;font-weight:700;margin-bottom:6px}.done p{color:var(--ink-2)}
+.hidden{display:none!important}
+.vas{width:100%;accent-color:var(--sel);height:44px}
+@media (max-width:520px){.grid{grid-template-columns:1fr}.rom{grid-template-columns:repeat(3,1fr)}}
+@media print{.bar,.tools,.mode,.steps,.noprint{display:none!important}body{background:#fff;padding:0}.card{break-inside:avoid;border-color:#bbb}}
+</style></head><body><div class="wrap">
+<header><h1>고관절 기능 설문 <small>서울성모병원 고관절 분과</small></h1><span class="mode" id="modeTag">외래</span></header>
+<div class="steps" id="steps"></div>
+
+<!-- STEP 0: 환자 정보 (직원) -->
+<div class="page" data-page="info">
+<section class="card"><h2><b>환자 정보</b><span class="pts">직원 입력</span></h2>
+  <div class="grid">
+    <div><label class="f">등록번호</label><input type="text" id="pid" inputmode="numeric" placeholder="예) 12345678"></div>
+    <div><label class="f">이름 (선택)</label><input type="text" id="pname" placeholder="홍길동"></div>
+    <div><label class="f">작성일</label><input type="date" id="pdate"></div>
+    <div><label class="f">지표 고관절</label><div class="seg" data-key="side"><button data-v="R">오른쪽</button><button data-v="L">왼쪽</button><button data-v="B">양측</button></div></div>
+    <div class="full"><label class="f">시점</label><div class="seg" data-key="visit"><button data-v="preop">술전</button><button data-v="6w">6주</button><button data-v="3m">3개월</button><button data-v="6m">6개월</button><button data-v="1y">1년</button><button data-v="other">기타</button></div></div>
+    <div class="full"><label class="f">시행할 설문</label>
+      <div class="opts" style="flex-direction:row;flex-wrap:wrap"><label class="chk"><input type="checkbox" id="useHHS" checked>Harris Hip Score</label><label class="chk"><input type="checkbox" id="useWOMAC" checked>WOMAC</label><label class="chk"><input type="checkbox" id="useEQ" checked>EQ-5D-3L</label></div></div>
+  </div>
+</section>
+<section class="card noprint" id="qrCard"><h2><b>환자 휴대폰으로 보내기</b><span class="pts">문자 발송 또는 QR</span></h2>
+  <div class="tools"><button class="btn" id="bQR">QR 만들기</button><button class="btn" id="bLink">링크 복사</button></div>
+  <div class="qrwrap hidden" id="qrbox"><div id="qr"></div><div class="qrurl" id="qrurl"></div><div class="hint">환자가 작성을 마치면 완료 화면에 결과 QR이 뜹니다. 그 QR을 이 태블릿 카메라로 찍으면 결과가 이 페이지에 자동으로 열립니다.</div></div>
+</section>
+<button class="btn p big" id="bStart">환자에게 태블릿 건네기 →</button>
+</div>
+
+<!-- STEP: HHS -->
+<div class="page hidden" data-page="hhs">
+<section class="card"><div class="intro"><b>Harris Hip Score</b> — 최근 상태를 기준으로 가장 가까운 항목을 골라 주세요.</div></section>
+<section class="card"><h2><b>통증</b><span class="pts">44점</span></h2><div class="q" data-key="pain"><div class="opts">
+  <button class="opt" data-v="44">전혀 없거나 무시할 정도<span class="pt">44</span></button><button class="opt" data-v="40">가끔 약간 있음, 활동에 지장 없음<span class="pt">40</span></button><button class="opt" data-v="30">경미함, 일상에는 영향 없고 과한 활동 후 통증, 가벼운 진통제 정도<span class="pt">30</span></button><button class="opt" data-v="20">중등도, 견딜 만하나 활동을 줄임, 가끔 강한 진통제<span class="pt">20</span></button><button class="opt" data-v="10">심함, 활동 크게 제한, 자주 진통제 복용<span class="pt">10</span></button><button class="opt" data-v="0">누워 있어도 아픔, 거동 불가<span class="pt">0</span></button></div></div></section>
+<section class="card"><h2><b>보행</b><span class="pts">33점</span></h2>
+  <div class="q" data-key="limp"><div class="t"><span>절뚝거림</span></div><div class="opts"><button class="opt" data-v="11">없음<span class="pt">11</span></button><button class="opt" data-v="8">약간<span class="pt">8</span></button><button class="opt" data-v="5">중등도<span class="pt">5</span></button><button class="opt" data-v="0">심함<span class="pt">0</span></button></div></div>
+  <div class="q" data-key="support"><div class="t"><span>보행 보조기</span></div><div class="opts"><button class="opt" data-v="11">사용 안 함<span class="pt">11</span></button><button class="opt" data-v="7">지팡이, 오래 걸을 때만<span class="pt">7</span></button><button class="opt" data-v="5">지팡이, 항상<span class="pt">5</span></button><button class="opt" data-v="3">목발 1개<span class="pt">3</span></button><button class="opt" data-v="2">지팡이 2개<span class="pt">2</span></button><button class="opt" data-v="0">목발 2개 / 보행 불가<span class="pt">0</span></button></div></div>
+  <div class="q" data-key="distance"><div class="t"><span>보행 거리</span></div><div class="opts"><button class="opt" data-v="11">제한 없음<span class="pt">11</span></button><button class="opt" data-v="8">약 500m (6블록)<span class="pt">8</span></button><button class="opt" data-v="5">약 200~300m (2~3블록)<span class="pt">5</span></button><button class="opt" data-v="2">실내에서만<span class="pt">2</span></button><button class="opt" data-v="0">침대·의자에서만<span class="pt">0</span></button></div></div></section>
+<section class="card"><h2><b>일상 활동</b><span class="pts">14점</span></h2>
+  <div class="q" data-key="stairs"><div class="t"><span>계단</span></div><div class="opts"><button class="opt" data-v="4">난간 없이 정상적으로<span class="pt">4</span></button><button class="opt" data-v="2">난간 잡고<span class="pt">2</span></button><button class="opt" data-v="1">어떤 방법으로든 가능<span class="pt">1</span></button><button class="opt" data-v="0">불가<span class="pt">0</span></button></div></div>
+  <div class="q" data-key="shoes"><div class="t"><span>신발·양말 신기</span></div><div class="opts"><button class="opt" data-v="4">쉽게<span class="pt">4</span></button><button class="opt" data-v="2">어렵게<span class="pt">2</span></button><button class="opt" data-v="0">불가<span class="pt">0</span></button></div></div>
+  <div class="q" data-key="sitting"><div class="t"><span>앉기</span></div><div class="opts"><button class="opt" data-v="5">아무 의자에나 1시간<span class="pt">5</span></button><button class="opt" data-v="3">높은 의자에 30분<span class="pt">3</span></button><button class="opt" data-v="0">편하게 앉지 못함<span class="pt">0</span></button></div></div>
+  <div class="q" data-key="transport"><div class="t"><span>대중교통 이용</span></div><div class="opts"><button class="opt" data-v="1">가능<span class="pt">1</span></button><button class="opt" data-v="0">불가<span class="pt">0</span></button></div></div></section>
+</div>
+
+<!-- STEP: WOMAC -->
+<div class="page hidden" data-page="womac">
+<section class="card"><div class="intro"><b>WOMAC</b> — 총 24문항. 지표 고관절이 <b>지난 24시간 동안</b> 느꼈던 통증·뻣뻣함·일상생활의 어려움을 표시해 주십시오. (0 없음 ~ 4 매우 심함)</div></section>
+<section class="card" id="secPain"><h2><b>통증</b><span class="pts">얼마나 심한 통증이 있었습니까?</span></h2><div class="items"></div><div class="sub"><span>Pain Score</span><b><span class="v">—</span> / 20</b></div></section>
+<section class="card" id="secStiff"><h2><b>뻣뻣함</b><span class="pts">뻣뻣한 정도는 얼마나 심합니까?</span></h2><div class="intro">뻣뻣함이란 관절을 움직일 때 움직임이 제한적이거나 느려지는 듯한 느낌(통증 아님)입니다.</div><div class="items"></div><div class="sub"><span>Stiffness Score</span><b><span class="v">—</span> / 8</b></div></section>
+<section class="card" id="secFunc"><h2><b>신체적 기능</b><span class="pts">어느 정도의 어려움이 있었습니까?</span></h2><div class="items"></div><div class="sub"><span>Function Score</span><b><span class="v">—</span> / 68</b></div><div class="sub" style="font-size:17px"><span>Total Score</span><b><span id="womacTotal">—</span> / 96</b></div></section>
+<section class="card"><h2><b>전반적 증상 평가</b></h2><div class="intro">지난 24시간 동안 귀하의 고관절염이 귀하에게 미친 모든 점들을 고려하였을 때, 어떠하였는지 표시하십시오.</div>
+  <div class="opts" id="global"><button class="opt" data-v="1">1점 : 매우 양호</button><button class="opt" data-v="2">2점 : 양호</button><button class="opt" data-v="3">3점 : 보통</button><button class="opt" data-v="4">4점 : 나쁨</button><button class="opt" data-v="5">5점 : 매우 나쁨</button></div></section>
+</div>
+
+<!-- STEP: EQ-5D -->
+<div class="page hidden" data-page="eq5d">
+<section class="card"><div class="intro"><b>EQ-5D</b> — 각 항목에서 <b>오늘</b> 귀하의 건강 상태를 가장 잘 설명하는 문장 하나를 선택해 주십시오.</div></section>
+<div id="dims"></div>
+<section class="card"><h2><b>EuroQol(EQ)-VAS</b><span class="pts">0 = 상상할 수 있는 최악의 건강 · 100 = 최상의 건강</span></h2>
+  <div class="intro">오늘 귀하의 건강 상태를 0에서 100 사이의 숫자로 표시해 주십시오.</div>
+  <input type="range" class="vas" id="vas" min="0" max="100" step="1" value="50">
+  <div class="grid" style="margin-top:8px;align-items:end"><div><label class="f">VAS 점수</label><input type="number" id="vasN" inputmode="numeric" min="0" max="100" placeholder="0–100"></div><div class="hint" id="vasHint" style="margin:0 0 12px;font-size:18px;color:var(--ink)">미입력</div></div>
+</section>
+</div>
+
+<!-- STEP: 완료 -->
+<div class="page hidden" data-page="done">
+<section class="card"><div class="done"><div class="big">작성이 끝났습니다. 감사합니다.</div><p id="doneMsg">태블릿을 직원에게 돌려주세요.</p></div>
+  <div class="qrwrap hidden" id="qr2box"><div id="qr2"></div><p class="hint">진료실에서 이 QR 코드를 보여주세요.</p></div></section>
+<section class="card" id="staffCard"><h2><b>결과 요약</b><span class="pts" id="sumMeta"></span></h2><table class="summary" id="sumTbl"></table></section>
+<section class="card noprint" id="clinCard"><h2><b>HHS 의료진 항목</b><span class="pts">진찰 후 입력 — 변형 4점 · ROM 5점</span></h2>
+  <div class="opts" id="deform" style="margin-bottom:10px"><label class="chk"><input type="checkbox" checked>고정 굴곡구축 &lt; 30°</label><label class="chk"><input type="checkbox" checked>고정 내전 &lt; 10°</label><label class="chk"><input type="checkbox" checked>신전 시 고정 내회전 &lt; 10°</label><label class="chk"><input type="checkbox" checked>하지 길이 차이 &lt; 3.2 cm</label></div>
+  <div class="rom"><div><label class="f">굴곡</label><input type="number" id="r_flex" inputmode="numeric" placeholder="°"></div><div><label class="f">외전</label><input type="number" id="r_abd" inputmode="numeric" placeholder="°"></div><div><label class="f">내전</label><input type="number" id="r_add" inputmode="numeric" placeholder="°"></div><div><label class="f">외회전</label><input type="number" id="r_er" inputmode="numeric" placeholder="°"></div><div><label class="f">내회전</label><input type="number" id="r_ir" inputmode="numeric" placeholder="°"></div></div>
+  <div class="hint" id="romHint"></div></section>
+<section class="card noprint" id="toolCard"><h2><b>직원 메뉴</b></h2>
+  <div class="tools"><button class="btn" id="bCopy">EMR 형식 복사</button><button class="btn" id="bCSV">CSV 다운로드</button><button class="btn" id="bJSON">JSON 다운로드</button><button class="btn" id="bPrint">인쇄 / PDF</button><button class="btn" id="bSend">시트로 전송</button><button class="btn p" id="bNew">새 환자</button></div>
+  <div class="hint" id="sendHint"></div></section>
+</div>
+</div>
+
+<div class="bar"><div class="in"><span class="st" id="stepTag"></span><span class="miss" id="missTag"></span>
+  <div class="btns"><button class="btn" id="bPrev">이전</button><button class="btn p" id="bNext">다음 →</button></div></div></div>
+
+<script>
+(function(){
+// ===== 설정 =====
+// Google Apps Script 웹앱 URL을 넣으면 '완료' 시 자동으로 시트에 저장됩니다. 비워두면 저장 안 함.
+const SAVE_URL='https://script.google.com/macros/s/AKfycbwWzxsbDo0NHsOrGNk5P8sTIN4xLopnwOB7EjMK8dys3wvM8GjxSrtPxRGIsjyd9-qjiA/exec';
+const AUTO_RESET_SEC=0; // 완료 화면에서 n초 뒤 자동으로 첫 화면 복귀 (0=끄기). 키오스크용.
+
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const P=new URLSearchParams(location.search);
+const MODE=P.get('mode')==='patient'?'patient':'clinic';
+const SIDE_KO={R:'오른쪽 고관절',L:'왼쪽 고관절',B:'양측 고관절'};
+const VISIT_KO={preop:'술전','6w':'6주','3m':'3개월','6m':'6개월','1y':'1년',other:'기타'};
+const seg={side:'',visit:''};
+
+// ===== HHS =====
+const HK=['pain','limp','support','distance','stairs','shoes','sitting','transport'];
+const HL={pain:'통증',limp:'절뚝거림',support:'보조기',distance:'보행거리',stairs:'계단',shoes:'신발',sitting:'앉기',transport:'대중교통'};
+const hhs={};
+$$('[data-page=hhs] .q').forEach(q=>q.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{hhs[q.dataset.key]=+b.dataset.v;render();}));
+const hhsPatient=()=>HK.every(k=>hhs[k]!==undefined)?HK.reduce((s,k)=>s+hhs[k],0):null;
+const romKeys=['flex','abd','add','er','ir'];
+const romTotal=()=>romKeys.reduce((s,k)=>s+(+$('#r_'+k).value||0),0);
+const romFilled=()=>romKeys.every(k=>$('#r_'+k).value!=='');
+const romPts=t=>t>210?5:t>160?4:t>100?3:t>60?2:t>30?1:0;
+const deformPts=()=>$$('#deform input').every(c=>c.checked)?4:0;
+const hhsTotal=()=>{const p=hhsPatient();return p!==null&&romFilled()?p+deformPts()+romPts(romTotal()):null;};
+const hhsGrade=s=>s>=90?'Excellent':s>=80?'Good':s>=70?'Fair':'Poor';
+$$('#deform input, .rom input').forEach(el=>el.addEventListener('input',render));
+
+// ===== WOMAC =====
+const WI={pain:['평지를 걸을 때','계단을 오르내릴 때','밤에 잠을 잘 때, 즉 수면을 방해하는 통증','앉아 있을 때 혹은 누워 있을 때','똑바로 서 있을 때'],
+ stiff:['아침에 막 잠에서 깼을 때 당신이 느끼는 뻣뻣한 정도는 얼마나 심합니까?','오후에 (의자에) 앉거나, 눕거나, 쉬고 난 후에 당신이 느끼는 뻣뻣한 정도는 얼마나 심합니까?'],
+ func:['계단을 내려갈 때','계단을 올라갈 때','앉아 있다가 일어설 때','서 있을 때','바닥에 몸을 구부릴 때','평지를 걸을 때','승용차나 버스를 타거나 내릴 때','시장을 보러 갈 때','양말이나 스타킹을 신을 때','이부자리에서 일어날 때','양말이나 스타킹을 벗을 때','이부자리에 누울 때','욕조에 들어가고 나올 때','(의자에) 앉아 있을 때','양변기에 앉거나 일어설 때','힘든 일을 할 때','가벼운 일을 할 때']};
+const WS={pain:'#secPain',stiff:'#secStiff',func:'#secFunc'};
+const wm=new Array(24).fill(null);let wglobal=null;const widx={};let wn=0;
+for(const k in WI){widx[k]=[];const box=$(WS[k]+' .items');WI[k].forEach(t=>{const i=wn++;widx[k].push(i);const q=document.createElement('div');q.className='q';
+  q.innerHTML=`<div class="t"><span class="no">${i+1}.</span><span>${t}</span></div><div class="scale">${[0,1,2,3,4].map(v=>`<button data-v="${v}">${v}</button>`).join('')}</div><div class="anchors"><span>없음</span><span>매우 심함</span></div>`;
+  q.querySelectorAll('.scale button').forEach(b=>b.onclick=()=>{wm[i]=+b.dataset.v;render();});box.appendChild(q);});}
+$$('#global .opt').forEach(b=>b.onclick=()=>{wglobal=+b.dataset.v;render();});
+const wsum=k=>widx[k].every(i=>wm[i]!==null)?widx[k].reduce((s,i)=>s+wm[i],0):null;
+const wtotal=()=>wm.every(v=>v!==null)?wm.reduce((s,v)=>s+v,0):null;
+
+// ===== EQ-5D =====
+const DIMS=[['운동능력',['나는 걷는데 지장이 없다.','나는 걷는데 다소 문제가 있다.','나는 종일 누워 있어야 한다.']],
+ ['자기관리',['나는 목욕을 혼자 하거나 옷을 입는데 지장이 없다.','나는 혼자 목욕을 하거나 옷을 입는데 다소 지장이 있다.','나는 혼자 목욕을 하거나 옷을 입을 수 없다.']],
+ ['일상활동(일, 공부, 가사일, 가족 또는 여가활동)',['나는 일상 활동을 하는데 지장이 없다.','나는 일상 활동을 하는데 다소 지장이 있다.','나는 일상 활동을 할 수 없다.']],
+ ['통증/불편감',['나는 통증이나 불편감이 없다.','나는 다소 통증이나 불편감이 있다.','나는 매우 심한 통증이나 불편감이 있다.']],
+ ['불안/우울',['나는 불안하거나 우울하지 않다.','나는 다소 불안하거나 우울하다.','나는 매우 심하게 불안하거나 우울하다.']]];
+const lv=[null,null,null,null,null];let vas=null;
+DIMS.forEach(([name,opts],d)=>{const s=document.createElement('section');s.className='card';
+  s.innerHTML=`<h2><b>${name}</b></h2><div class="opts">${opts.map((t,j)=>`<button class="opt" data-v="${j+1}"><span>Level ${j+1}. ${t}</span></button>`).join('')}</div>`;
+  s.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{lv[d]=+b.dataset.v;render();});$('#dims').appendChild(s);});
+$('#vas').oninput=e=>{vas=+e.target.value;$('#vasN').value=vas;render();};
+$('#vasN').oninput=e=>{const v=e.target.value;vas=v===''?null:Math.max(0,Math.min(100,+v));if(vas!==null)$('#vas').value=vas;render();};
+// 한국형 EQ-5D-3L 가치평가 (Lee YK et al., 2009, TTO)
+const W={c:0.050,m:[0,0.096,0.418],s:[0,0.046,0.136],u:[0,0.051,0.208],p:[0,0.037,0.151],a:[0,0.043,0.158],n3:0.050};
+const eqState=()=>lv.every(v=>v!==null)?lv.join(''):null;
+const eqIndex=()=>{if(!eqState())return null;const k=['m','s','u','p','a'];let d=0;lv.forEach((v,i)=>d+=W[k[i]][v-1]);if(lv.some(v=>v>1))d+=W.c;if(lv.some(v=>v===3))d+=W.n3;return Math.round((1-d)*1000)/1000;};
+
+// ===== 흐름 =====
+const use={hhs:true,womac:true,eq5d:true};
+let pages=[],cur=0;
+const buildPages=()=>{pages=['info'];if(use.hhs)pages.push('hhs');if(use.womac)pages.push('womac');if(use.eq5d)pages.push('eq5d');pages.push('done');};
+const missing=p=>p==='hhs'?HK.filter(k=>hhs[k]===undefined).length:p==='womac'?wm.filter(v=>v===null).length+(wglobal===null?1:0):p==='eq5d'?lv.filter(v=>v===null).length+(vas===null?1:0):p==='info'?($('#pid').value?0:1):0;
+const PT={info:'환자 정보',hhs:'HHS',womac:'WOMAC',eq5d:'EQ-5D',done:'완료'};
+
+function go(i){cur=Math.max(0,Math.min(pages.length-1,i));$$('.page').forEach(p=>p.classList.toggle('hidden',p.dataset.page!==pages[cur]));window.scrollTo(0,0);if(pages[cur]==='done')onDone();render();}
+function render(){
+  $$('.seg').forEach(s=>s.querySelectorAll('button').forEach(b=>b.classList.toggle('on',seg[s.dataset.key]===b.dataset.v)));
+  $$('[data-page=hhs] .q').forEach(q=>q.querySelectorAll('.opt').forEach(b=>b.classList.toggle('on',hhs[q.dataset.key]===+b.dataset.v)));
+  $$('[data-page=womac] .q').forEach((q,i)=>q.querySelectorAll('.scale button').forEach(b=>b.classList.toggle('on',wm[i]===+b.dataset.v)));
+  $$('#global .opt').forEach(b=>b.classList.toggle('on',wglobal===+b.dataset.v));
+  for(const k in WS){const s=wsum(k);$(WS[k]+' .v').textContent=s===null?'—':s;}$('#womacTotal').textContent=wtotal()??'—';
+  $$('#dims section').forEach((s,d)=>s.querySelectorAll('.opt').forEach(b=>b.classList.toggle('on',lv[d]===+b.dataset.v)));
+  $('#vasHint').textContent=vas===null?'미입력':`VAS ${vas}`;
+  const t=romTotal();$('#romHint').textContent=`변형 ${deformPts()}점 · ROM 합계 ${romFilled()?t+'° → '+romPts(t)+'점':'—'} (211–300° 5, 161–210° 4, 101–160° 3, 61–100° 2, 31–60° 1, 0–30° 0) · HHS 총점 ${hhsTotal()??'—'}`;
+  // 진행 바
+  $('#steps').innerHTML=pages.map((p,i)=>`<span class="${i<cur?'done':i===cur?'cur':''}"></span>`).join('');
+  const p=pages[cur],m=missing(p);
+  $('#stepTag').textContent=`${cur+1} / ${pages.length} · ${PT[p]}`;
+  $('#missTag').textContent=m?(p==='info'?'등록번호 필요':`미응답 ${m}개`):'';
+  $('#bNext').disabled=m>0;$('#bNext').textContent=cur===pages.length-2?'완료':'다음 →';
+  $('#bPrev').classList.toggle('hidden',cur===0||p==='done');$('#bNext').classList.toggle('hidden',p==='done'||p==='info');
+  $('.bar').classList.toggle('hidden',p==='done'&&MODE==='patient');
+  if(p==='done')renderSummary();
+}
+$('#bNext').onclick=()=>go(cur+1);$('#bPrev').onclick=()=>go(cur-1);
+$('#bStart').onclick=()=>{if(!$('#pid').value){alert('등록번호를 입력하세요.');$('#pid').focus();return;}use.hhs=$('#useHHS').checked;use.womac=$('#useWOMAC').checked;use.eq5d=$('#useEQ').checked;buildPages();go(1);};
+$$('.seg').forEach(s=>s.querySelectorAll('button').forEach(b=>b.onclick=()=>{seg[s.dataset.key]=b.dataset.v;render();}));
+['pid','pname'].forEach(id=>$('#'+id).addEventListener('input',render));
+
+// ===== 데이터 =====
+const info=()=>({pid:$('#pid').value,name:$('#pname').value,date:$('#pdate').value,side:seg.side,visit:seg.visit});
+function record(){const r=info();const o={...r,side_ko:SIDE_KO[r.side]||'',visit_ko:VISIT_KO[r.visit]||''};
+  if(use.hhs){HK.forEach(k=>o['hhs_'+k]=hhs[k]??'');o.hhs_patient=hhsPatient()??'';o.hhs_deform=deformPts();romKeys.forEach(k=>o['rom_'+k]=$('#r_'+k).value);o.rom_total=romFilled()?romTotal():'';o.rom_pts=romFilled()?romPts(romTotal()):'';const t=hhsTotal();o.hhs_total=t??'';o.hhs_grade=t===null?'':hhsGrade(t);}
+  if(use.womac){wm.forEach((v,i)=>o['womac_q'+(i+1)]=v??'');o.womac_pain=wsum('pain')??'';o.womac_stiff=wsum('stiff')??'';o.womac_func=wsum('func')??'';o.womac_total=wtotal()??'';o.womac_global=wglobal??'';}
+  if(use.eq5d){['eq_mo','eq_sc','eq_ua','eq_pd','eq_ad'].forEach((k,i)=>o[k]=lv[i]??'');o.eq_state=eqState()??'';o.eq_index_kr=eqIndex()??'';o.eq_vas=vas??'';}
+  o.mode=MODE;o.saved_at=new Date().toISOString();return o;}
+function emrText(){const r=info(),L=[];
+  if(use.hhs){L.push('[Harris Hip Score]');HK.forEach(k=>L.push(`${HL[k]} : ${hhs[k]??''}`));L.push(`변형 없음 : ${deformPts()}`,`ROM 합계 : ${romFilled()?romTotal()+'° ('+romPts(romTotal())+')':''}`,`HHS Total : ${hhsTotal()??''}${hhsTotal()!==null?' ('+hhsGrade(hhsTotal())+')':''}`,'');}
+  if(use.womac){L.push('[WOMAC]',`작성자 : ${r.name}`,`작성일 : ${r.date}`,`귀하의 지표 고관절은 : ${SIDE_KO[r.side]||''}`);let i=0;const push=(k,lab)=>{WI[k].forEach(t=>{L.push(`${i+1}. ${t} : ${wm[i]??''}`);i++;});L.push(`${lab} : ${wsum(k)??''}`);};push('pain','Pain Score');push('stiff','Stiffness Score');push('func','Function Score');L.push(`Total Score : ${wtotal()??''}`,`전반적 증상 평가 : ${wglobal??''}`,'');}
+  if(use.eq5d){L.push('[EQ-5D-3L]');DIMS.forEach(([n,o],d)=>L.push(`${n} : Level ${lv[d]??''}. ${lv[d]?o[lv[d]-1]:''}`));L.push(`EuroQol(EQ)-VAS : ${vas??''}`,`EQ-5D index (한국형) : ${eqIndex()?.toFixed(3)??''}`);}
+  return L.join('\n');}
+function renderSummary(){const r=info();$('#sumMeta').textContent=`${r.pid} ${r.name} · ${SIDE_KO[r.side]||''} · ${VISIT_KO[r.visit]||''} · ${r.date}`;const rows=[];
+  if(use.hhs){const t=hhsTotal();rows.push(['HHS 환자 항목 (/91)',hhsPatient()??'—'],['HHS 총점 (/100)',t===null?'의료진 입력 대기':`${t} (${hhsGrade(t)})`]);}
+  if(use.womac)rows.push(['WOMAC Pain (/20)',wsum('pain')??'—'],['WOMAC Stiffness (/8)',wsum('stiff')??'—'],['WOMAC Function (/68)',wsum('func')??'—'],['WOMAC Total (/96)',wtotal()??'—'],['전반적 증상 평가 (1–5)',wglobal??'—']);
+  if(use.eq5d)rows.push(['EQ-5D 건강상태',eqState()??'—'],['EQ-5D index (한국형)',eqIndex()?.toFixed(3)??'—'],['EQ-VAS',vas??'—']);
+  $('#sumTbl').innerHTML=rows.map(([a,b])=>`<tr><td>${a}</td><td>${b}</td></tr>`).join('');}
+
+// ===== URL / QR =====
+const baseURL=()=>location.origin+location.pathname;
+const answerString=()=>[HK.map(k=>hhs[k]??'').join('.'),wm.map(v=>v??'').concat([wglobal??'']).join('.'),lv.map(v=>v??'').concat([vas??'']).join('.')].join('~');
+const useString=()=>(use.hhs?'h':'')+(use.womac?'w':'')+(use.eq5d?'e':'');
+const patientURL=()=>{const r=info();return baseURL()+'?'+new URLSearchParams({mode:'patient',...r,u:useString()});};
+const resultURL=()=>{const r=info();return baseURL()+'?'+new URLSearchParams({...r,u:useString(),a:answerString()});};
+const makeQR=(el,t)=>{el.innerHTML='';new QRCode(el,{text:t,width:220,height:220,correctLevel:QRCode.CorrectLevel.M});};
+$('#bQR').onclick=()=>{if(!$('#pid').value){alert('등록번호를 먼저 입력하세요.');return;}use.hhs=$('#useHHS').checked;use.womac=$('#useWOMAC').checked;use.eq5d=$('#useEQ').checked;$('#qrbox').classList.remove('hidden');makeQR($('#qr'),patientURL());$('#qrurl').textContent=patientURL();};
+$('#bLink').onclick=()=>{if(!$('#pid').value){alert('등록번호를 먼저 입력하세요.');return;}use.hhs=$('#useHHS').checked;use.womac=$('#useWOMAC').checked;use.eq5d=$('#useEQ').checked;navigator.clipboard.writeText(patientURL()).then(()=>{$('#bLink').textContent='복사됨';setTimeout(()=>$('#bLink').textContent='링크 복사',1200);});};
+
+// ===== 완료 =====
+const dl=(name,text,type)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();};
+const fname=ext=>{const r=info();return `PROM_${r.pid||'noid'}_${r.visit||'visit'}_${r.date}.${ext}`;};
+$('#bJSON').onclick=()=>dl(fname('json'),JSON.stringify(record(),null,2),'application/json');
+$('#bCSV').onclick=()=>{const r=record();dl(fname('csv'),'\uFEFF'+Object.keys(r).join(',')+'\n'+Object.values(r).map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','),'text/csv');};
+$('#bCopy').onclick=()=>navigator.clipboard.writeText(emrText()).then(()=>{$('#bCopy').textContent='복사됨';setTimeout(()=>$('#bCopy').textContent='EMR 형식 복사',1200);});
+$('#bPrint').onclick=()=>window.print();
+$('#bNew').onclick=()=>location.href=baseURL();
+async function send(){if(!SAVE_URL){$('#sendHint').textContent='SAVE_URL이 비어 있어 시트 저장은 꺼져 있습니다. (파일 상단 설정)';return false;}
+  try{await fetch(SAVE_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(record())});$('#sendHint').textContent='시트로 전송됨 '+new Date().toLocaleTimeString();return true;}catch(e){$('#sendHint').textContent='전송 실패: '+e.message;return false;}}
+$('#bSend').onclick=send;
+function onDone(){const patient=MODE==='patient';
+  $('#staffCard').classList.toggle('hidden',patient);$('#clinCard').classList.toggle('hidden',patient||!use.hhs);$('#toolCard').classList.toggle('hidden',patient);
+  $('#qr2box').classList.toggle('hidden',!patient);$('#doneMsg').textContent=patient?'진료 당일 접수 시 아래 QR 코드를 보여주시면 됩니다.':'태블릿을 직원에게 돌려주세요.';
+  if(patient)makeQR($('#qr2'),resultURL());
+  send();
+  if(AUTO_RESET_SEC&&!patient)setTimeout(()=>location.href=baseURL(),AUTO_RESET_SEC*1000);}
+
+// ===== 초기화 (URL 파라미터) =====
+$('#pdate').value=new Date().toISOString().slice(0,10);
+if(P.get('pid'))$('#pid').value=P.get('pid');if(P.get('name'))$('#pname').value=P.get('name');if(P.get('date'))$('#pdate').value=P.get('date');
+if(P.get('side'))seg.side=P.get('side');if(P.get('visit'))seg.visit=P.get('visit');
+if(P.get('u')){use.hhs=P.get('u').includes('h');use.womac=P.get('u').includes('w');use.eq5d=P.get('u').includes('e');$('#useHHS').checked=use.hhs;$('#useWOMAC').checked=use.womac;$('#useEQ').checked=use.eq5d;}
+if(MODE==='patient'){$('#modeTag').textContent='환자 입력';$('#qrCard').classList.add('hidden');$('#pid').readOnly=true;$('#pname').readOnly=true;$('#bStart').textContent='설문 시작 →';}
+buildPages();
+if(P.get('a')){const [h,w,e]=P.get('a').split('~');
+  if(h)h.split('.').forEach((v,i)=>{if(v!=='')hhs[HK[i]]=+v;});
+  if(w){const a=w.split('.');a.slice(0,24).forEach((v,i)=>{if(v!=='')wm[i]=+v;});if(a[24])wglobal=+a[24];}
+  if(e){const a=e.split('.');a.slice(0,5).forEach((v,i)=>{if(v!=='')lv[i]=+v;});if(a[5]!==''&&a[5]!==undefined){vas=+a[5];$('#vas').value=vas;$('#vasN').value=vas;}}
+  go(pages.length-1);}else go(0);
+})();
+</script></body></html>
