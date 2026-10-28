@@ -51,7 +51,9 @@ input:focus,button:focus-visible{outline:2px solid var(--sel);outline-offset:1px
 .done{text-align:center;padding:16px 8px}.done .big{font-size:26px;font-weight:700;margin-bottom:6px}.done p{color:var(--ink-2)}
 .hidden{display:none!important}
 .vas{width:100%;accent-color:var(--sel);height:44px}
-@media (max-width:520px){.grid{grid-template-columns:1fr}.rom{grid-template-columns:repeat(3,1fr)}}
+.anchors.big{font-size:16px;font-weight:600;color:var(--ink);margin:2px 0 10px}
+.nrs{display:grid;grid-template-columns:repeat(11,1fr);gap:5px}.nrs button{font:inherit;font-size:18px;font-weight:600;min-height:50px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink-2);cursor:pointer}.nrs button.on{background:var(--sel);border-color:var(--sel);color:#fff}
+@media (max-width:520px){.grid{grid-template-columns:1fr}.rom{grid-template-columns:repeat(3,1fr)}.nrs{grid-template-columns:repeat(6,1fr)}}
 @media print{.bar,.tools,.mode,.steps,.noprint{display:none!important}body{background:#fff;padding:0}.card{break-inside:avoid;border-color:#bbb}}
 </style></head><body><div class="wrap">
 <header><h1>고관절 기능 설문 <small>서울성모병원 고관절 분과</small></h1><span class="mode" id="modeTag">외래</span></header>
@@ -107,10 +109,16 @@ input:focus,button:focus-visible{outline:2px solid var(--sel);outline-offset:1px
 <div class="page hidden" data-page="eq5d">
 <section class="card"><div class="intro"><b>EQ-5D</b> — 각 항목에서 <b>오늘</b> 귀하의 건강 상태를 가장 잘 설명하는 문장 하나를 선택해 주십시오.</div></section>
 <div id="dims"></div>
-<section class="card"><h2><b>EuroQol(EQ)-VAS</b><span class="pts">0 = 상상할 수 있는 최악의 건강 · 100 = 최상의 건강</span></h2>
+<section class="card"><h2><b>EuroQol(EQ)-VAS</b></h2>
   <div class="intro">오늘 귀하의 건강 상태를 0에서 100 사이의 숫자로 표시해 주십시오.</div>
+  <div class="anchors big"><span>0 = 상상할 수 있는 최악의 건강</span><span>100 = 최상의 건강</span></div>
   <input type="range" class="vas" id="vas" min="0" max="100" step="1" value="50">
   <div class="grid" style="margin-top:8px;align-items:end"><div><label class="f">VAS 점수</label><input type="number" id="vasN" inputmode="numeric" min="0" max="100" placeholder="0–100"></div><div class="hint" id="vasHint" style="margin:0 0 12px;font-size:18px;color:var(--ink)">미입력</div></div>
+</section>
+<section class="card"><h2><b>Pain NRS</b><span class="pts">0–10</span></h2>
+  <div class="intro">지금 느끼는 고관절 통증의 정도를 0에서 10 사이의 숫자로 표시해 주십시오.</div>
+  <div class="nrs" id="nrs"></div>
+  <div class="anchors big"><span>0 = 통증 없음</span><span>10 = 상상할 수 있는 최악의 통증</span></div>
 </section>
 </div>
 
@@ -180,7 +188,8 @@ const DIMS=[['운동능력',['나는 걷는데 지장이 없다.','나는 걷는
  ['일상활동(일, 공부, 가사일, 가족 또는 여가활동)',['나는 일상 활동을 하는데 지장이 없다.','나는 일상 활동을 하는데 다소 지장이 있다.','나는 일상 활동을 할 수 없다.']],
  ['통증/불편감',['나는 통증이나 불편감이 없다.','나는 다소 통증이나 불편감이 있다.','나는 매우 심한 통증이나 불편감이 있다.']],
  ['불안/우울',['나는 불안하거나 우울하지 않다.','나는 다소 불안하거나 우울하다.','나는 매우 심하게 불안하거나 우울하다.']]];
-const lv=[null,null,null,null,null];let vas=null;
+const lv=[null,null,null,null,null];let vas=null;let nrs=null;
+for(let i=0;i<=10;i++){const b=document.createElement('button');b.textContent=i;b.onclick=()=>{nrs=i;render();};$('#nrs').appendChild(b);}
 DIMS.forEach(([name,opts],d)=>{const s=document.createElement('section');s.className='card';
   s.innerHTML=`<h2><b>${name}</b></h2><div class="opts">${opts.map((t,j)=>`<button class="opt" data-v="${j+1}"><span>Level ${j+1}. ${t}</span></button>`).join('')}</div>`;
   s.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{lv[d]=+b.dataset.v;render();});$('#dims').appendChild(s);});
@@ -195,7 +204,7 @@ const eqIndex=()=>{if(!eqState())return null;const k=['m','s','u','p','a'];let d
 const use={hhs:true,womac:true,eq5d:true};
 let pages=[],cur=0;
 const buildPages=()=>{pages=['info'];if(use.hhs)pages.push('hhs');if(use.womac)pages.push('womac');if(use.eq5d)pages.push('eq5d');pages.push('done');};
-const missing=p=>p==='hhs'?HK.filter(k=>hhs[k]===undefined).length:p==='womac'?wm.filter(v=>v===null).length+(wglobal===null?1:0):p==='eq5d'?lv.filter(v=>v===null).length+(vas===null?1:0):p==='info'?($('#pid').value?0:1):0;
+const missing=p=>p==='hhs'?HK.filter(k=>hhs[k]===undefined).length:p==='womac'?wm.filter(v=>v===null).length+(wglobal===null?1:0):p==='eq5d'?lv.filter(v=>v===null).length+(vas===null?1:0)+(nrs===null?1:0):p==='info'?($('#pid').value?0:1):0;
 const PT={info:'환자 정보',hhs:'HHS',womac:'WOMAC',eq5d:'EQ-5D',done:'완료'};
 
 function go(i){cur=Math.max(0,Math.min(pages.length-1,i));$$('.page').forEach(p=>p.classList.toggle('hidden',p.dataset.page!==pages[cur]));window.scrollTo(0,0);if(pages[cur]==='done')onDone();render();}
@@ -206,7 +215,7 @@ function render(){
   $$('#global .opt').forEach(b=>b.classList.toggle('on',wglobal===+b.dataset.v));
   for(const k in WS){const s=wsum(k);$(WS[k]+' .v').textContent=s===null?'—':s;}$('#womacTotal').textContent=wtotal()??'—';
   $$('#dims section').forEach((s,d)=>s.querySelectorAll('.opt').forEach(b=>b.classList.toggle('on',lv[d]===+b.dataset.v)));
-  $('#vasHint').textContent=vas===null?'미입력':`VAS ${vas}`;
+  $('#vasHint').textContent=vas===null?'미입력':`VAS ${vas}`;$$('#nrs button').forEach((b,i)=>b.classList.toggle('on',nrs===i));
   const t=romTotal();$('#romHint').textContent=`변형 ${deformPts()}점 · ROM 합계 ${romFilled()?t+'° → '+romPts(t)+'점':'—'} (211–300° 5, 161–210° 4, 101–160° 3, 61–100° 2, 31–60° 1, 0–30° 0) · HHS 총점 ${hhsTotal()??'—'}`;
   // 진행 바
   $('#steps').innerHTML=pages.map((p,i)=>`<span class="${i<cur?'done':i===cur?'cur':''}"></span>`).join('');
@@ -228,22 +237,22 @@ const info=()=>({pid:$('#pid').value,name:$('#pname').value,date:$('#pdate').val
 function record(){const r=info();const o={...r,side_ko:SIDE_KO[r.side]||'',visit_ko:VISIT_KO[r.visit]||''};
   if(use.hhs){HK.forEach(k=>o['hhs_'+k]=hhs[k]??'');o.hhs_patient=hhsPatient()??'';o.hhs_deform=deformPts();romKeys.forEach(k=>o['rom_'+k]=$('#r_'+k).value);o.rom_total=romFilled()?romTotal():'';o.rom_pts=romFilled()?romPts(romTotal()):'';const t=hhsTotal();o.hhs_total=t??'';o.hhs_grade=t===null?'':hhsGrade(t);}
   if(use.womac){wm.forEach((v,i)=>o['womac_q'+(i+1)]=v??'');o.womac_pain=wsum('pain')??'';o.womac_stiff=wsum('stiff')??'';o.womac_func=wsum('func')??'';o.womac_total=wtotal()??'';o.womac_global=wglobal??'';}
-  if(use.eq5d){['eq_mo','eq_sc','eq_ua','eq_pd','eq_ad'].forEach((k,i)=>o[k]=lv[i]??'');o.eq_state=eqState()??'';o.eq_index_kr=eqIndex()??'';o.eq_vas=vas??'';}
+  if(use.eq5d){['eq_mo','eq_sc','eq_ua','eq_pd','eq_ad'].forEach((k,i)=>o[k]=lv[i]??'');o.eq_state=eqState()??'';o.eq_index_kr=eqIndex()??'';o.eq_vas=vas??'';o.pain_nrs=nrs??'';}
   o.mode=MODE;o.saved_at=new Date().toISOString();return o;}
 function emrText(){const r=info(),L=[];
   if(use.hhs){L.push('[Harris Hip Score]');HK.forEach(k=>L.push(`${HL[k]} : ${hhs[k]??''}`));L.push(`변형 없음 : ${deformPts()}`,`ROM 합계 : ${romFilled()?romTotal()+'° ('+romPts(romTotal())+')':''}`,`HHS Total : ${hhsTotal()??''}${hhsTotal()!==null?' ('+hhsGrade(hhsTotal())+')':''}`,'');}
   if(use.womac){L.push('[WOMAC]',`작성자 : ${r.name}`,`작성일 : ${r.date}`,`귀하의 지표 고관절은 : ${SIDE_KO[r.side]||''}`);let i=0;const push=(k,lab)=>{WI[k].forEach(t=>{L.push(`${i+1}. ${t} : ${wm[i]??''}`);i++;});L.push(`${lab} : ${wsum(k)??''}`);};push('pain','Pain Score');push('stiff','Stiffness Score');push('func','Function Score');L.push(`Total Score : ${wtotal()??''}`,`전반적 증상 평가 : ${wglobal??''}`,'');}
-  if(use.eq5d){L.push('[EQ-5D-3L]');DIMS.forEach(([n,o],d)=>L.push(`${n} : Level ${lv[d]??''}. ${lv[d]?o[lv[d]-1]:''}`));L.push(`EuroQol(EQ)-VAS : ${vas??''}`,`EQ-5D index (한국형) : ${eqIndex()?.toFixed(3)??''}`);}
+  if(use.eq5d){L.push('[EQ-5D-3L]');DIMS.forEach(([n,o],d)=>L.push(`${n} : Level ${lv[d]??''}. ${lv[d]?o[lv[d]-1]:''}`));L.push(`EuroQol(EQ)-VAS : ${vas??''}`,`Pain NRS : ${nrs??''}`,`EQ-5D index (한국형) : ${eqIndex()?.toFixed(3)??''}`);}
   return L.join('\n');}
 function renderSummary(){const r=info();$('#sumMeta').textContent=`${r.pid} ${r.name} · ${SIDE_KO[r.side]||''} · ${VISIT_KO[r.visit]||''} · ${r.date}`;const rows=[];
   if(use.hhs){const t=hhsTotal();rows.push(['HHS 환자 항목 (/91)',hhsPatient()??'—'],['HHS 총점 (/100)',t===null?'의료진 입력 대기':`${t} (${hhsGrade(t)})`]);}
   if(use.womac)rows.push(['WOMAC Pain (/20)',wsum('pain')??'—'],['WOMAC Stiffness (/8)',wsum('stiff')??'—'],['WOMAC Function (/68)',wsum('func')??'—'],['WOMAC Total (/96)',wtotal()??'—'],['전반적 증상 평가 (1–5)',wglobal??'—']);
-  if(use.eq5d)rows.push(['EQ-5D 건강상태',eqState()??'—'],['EQ-5D index (한국형)',eqIndex()?.toFixed(3)??'—'],['EQ-VAS',vas??'—']);
+  if(use.eq5d)rows.push(['EQ-5D 건강상태',eqState()??'—'],['EQ-5D index (한국형)',eqIndex()?.toFixed(3)??'—'],['EQ-VAS',vas??'—'],['Pain NRS (0–10)',nrs??'—']);
   $('#sumTbl').innerHTML=rows.map(([a,b])=>`<tr><td>${a}</td><td>${b}</td></tr>`).join('');}
 
 // ===== URL / QR =====
 const baseURL=()=>location.origin+location.pathname;
-const answerString=()=>[HK.map(k=>hhs[k]??'').join('.'),wm.map(v=>v??'').concat([wglobal??'']).join('.'),lv.map(v=>v??'').concat([vas??'']).join('.')].join('~');
+const answerString=()=>[HK.map(k=>hhs[k]??'').join('.'),wm.map(v=>v??'').concat([wglobal??'']).join('.'),lv.map(v=>v??'').concat([vas??'',nrs??'']).join('.')].join('~');
 const useString=()=>(use.hhs?'h':'')+(use.womac?'w':'')+(use.eq5d?'e':'');
 const patientURL=()=>{const r=info();return baseURL()+'?'+new URLSearchParams({mode:'patient',...r,u:useString()});};
 const resultURL=()=>{const r=info();return baseURL()+'?'+new URLSearchParams({...r,u:useString(),a:answerString()});};
@@ -279,7 +288,7 @@ buildPages();
 if(P.get('a')){const [h,w,e]=P.get('a').split('~');
   if(h)h.split('.').forEach((v,i)=>{if(v!=='')hhs[HK[i]]=+v;});
   if(w){const a=w.split('.');a.slice(0,24).forEach((v,i)=>{if(v!=='')wm[i]=+v;});if(a[24])wglobal=+a[24];}
-  if(e){const a=e.split('.');a.slice(0,5).forEach((v,i)=>{if(v!=='')lv[i]=+v;});if(a[5]!==''&&a[5]!==undefined){vas=+a[5];$('#vas').value=vas;$('#vasN').value=vas;}}
+  if(e){const a=e.split('.');a.slice(0,5).forEach((v,i)=>{if(v!=='')lv[i]=+v;});if(a[5]!==''&&a[5]!==undefined){vas=+a[5];$('#vas').value=vas;$('#vasN').value=vas;}if(a[6]!==''&&a[6]!==undefined)nrs=+a[6];}
   go(pages.length-1);}else go(0);
 })();
 </script></body></html>
